@@ -1,0 +1,35 @@
+# syntax=docker/dockerfile:1.4
+FROM ubuntu:22.04
+
+# 1) Build args que no exponen secretos
+ARG SSH_USER=usui
+ARG NODE_NAME=ssh-test
+
+# 2) Variables de entorno (no sensibles)
+ENV DEBIAN_FRONTEND=noninteractive \
+    SSH_USER=${SSH_USER} \
+    NODE_NAME=${NODE_NAME}
+
+# 3) Instalación y configuración básica
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends openssh-server \
+ && rm -rf /var/lib/apt/lists/* \
+ && useradd -m -s /bin/bash "$SSH_USER" \
+ && mkdir -p /var/run/sshd \
+ && sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin no/' \
+         /etc/ssh/sshd_config \
+ && sed -ri 's/^#?PasswordAuthentication\s+.*/PasswordAuthentication yes/' \
+         /etc/ssh/sshd_config \
+ && echo "$NODE_NAME" > /etc/hostname
+
+# 4) Exponer puerto SSH
+EXPOSE 22
+
+# 5) Al arrancar:
+#    - genera host-keys si faltan
+#    - asigna la contraseña que pasemos como ENV
+#    - lanza sshd en primer plano
+CMD bash -lc "\
+    [ ! -f /etc/ssh/ssh_host_ed25519_key ] && ssh-keygen -A; \
+    echo \"${SSH_USER}:${SSH_PASSWORD}\" | chpasswd; \
+    exec /usr/sbin/sshd -D"

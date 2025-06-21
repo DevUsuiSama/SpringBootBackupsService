@@ -4,6 +4,16 @@ Proyecto backend desarrollado en Spring Boot que permite realizar **backups prog
 
 ---
 
+## 🎓 Proyecto Académico
+
+- **Asignatura:** Ingeniería de Software II  
+- **Carrera:** Ingeniería en Sistemas de Información  
+- **Docente Responsable:** Ing. René Gabriel Kutz  
+- **Institución:** Universidad de la Cuenca del Plata  
+- **Facultad:** Facultad de Ingeniería y Tecnología  
+
+---
+
 ## 📦 Estructura del Proyecto
 ```
 .
